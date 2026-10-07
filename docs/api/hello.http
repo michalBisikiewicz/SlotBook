@@ -1,0 +1,3 @@
+### Get greetings with current timestamp!
+GET http://localhost:8080/api/hello
+Accept: application/json

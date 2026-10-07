@@ -33,7 +33,7 @@
 **Złota reguła: każdą linię w PR musisz umieć wyjaśnić.** Mentor może zapytać o dowolną.
 
 Ustawienia Claude Code:
-- [CLAUDE.md](../CLAUDE.md) w repo mówi Claude'owi, jak ma się zachowywać. Przy przejściu do nowej fazy zmień w nim linię `FAZA:`.
+- [CLAUDE.md](../../CLAUDE.md) w repo mówi Claude'owi, jak ma się zachowywać. Przy przejściu do nowej fazy zmień w nim linię `FAZA:`.
 - Od fazy 2 ustaw w Claude Code styl wypowiedzi (output style) **„Learning”** — wtedy Claude tłumaczy i zostawia ci fragmenty do napisania.
 
 ## Gdy utkniesz
