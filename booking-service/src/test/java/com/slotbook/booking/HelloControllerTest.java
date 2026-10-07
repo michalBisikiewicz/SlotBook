@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(HelloController.class)
-class MessageControllerTest {
+class HelloControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -21,6 +21,6 @@ class MessageControllerTest {
         mockMvc.perform(get("/api/hello"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Hello, how are you?"))
-                .andExpect(jsonPath("$.timestamp").value(org.hamcrest.Matchers.startsWith("2026-10-02")));
+                .andExpect(jsonPath("$.timestamp").exists());
         }
     }
