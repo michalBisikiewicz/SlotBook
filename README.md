@@ -1,8 +1,6 @@
-# Slotbook
+# SlotBook
 
 System rezerwacji zasobów na sloty czasowe (korty, sale, sprzęt). Projekt do nauki, rozwijany etapami: od prostego REST API do systemu rozproszonego w chmurze.
-
-> Domena jest umowna. Jeśli masz lepszy pomysł (np. z poprzedniej pracy), podmień ją — struktura faz zostaje ta sama.
 
 ## Roadmapa
 
@@ -66,10 +64,19 @@ slotbook/
 
 ## Jak uruchomić
 
-_Uzupełniasz sam w miarę postępów — to część zadania 0.2._
+- Potrzebny jest JDK27
+- Aby uruchomić aplikację:
+```bash
+./mvnw spring-boot:run
+```
+- Aplikacja dostępna jest pod adresem http://localhost:8080/api/hello
+- Uruchom testy komendą:
+```bash
+./mvnw verify
+```
 
-## Poza kodem
+## Endpointy
 
-- **Po fazie 3:** profil GitHub i LinkedIn, CV z linkiem do tego repo.
-- **Po fazie 4:** opcjonalnie certyfikat AZ-900 (tani, w CV juniora czasem pomaga).
-- **Po fazie 5:** próbne rozmowy rekrutacyjne z mentorem — techniczna i „opowiedz o projekcie”.
+| Metoda  |     URL    |                        Opis                  |
+|-------- |------------|----------------------------------------------|
+|  GET    | /api/hello  | endpoint kierujący do wiadomości powitalnej  |
