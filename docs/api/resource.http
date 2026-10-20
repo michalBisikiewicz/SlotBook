@@ -1,0 +1,27 @@
+### Download all data
+GET http://localhost:8080/api/resources
+Accept: application/json
+
+### Get specific record by id
+GET http://localhost:8080/api/resources/{id}
+Accept: application/json
+
+### Create a new record
+POST http://localhost:8080/api/resources/{id}
+Content-Type: application/json
+
+{
+  "name": "Sala B",
+  "type": "ROOM",
+  "openingTime": "09:00:00",
+  "closingTime": "18:00:00",
+  "active": true
+}
+
+### Update record
+PUT http://localhost:8080/api/resources/{id}
+Accept: application/json
+
+### Delete record by id
+DELETE http://localhost:8080/api/resources/{id}
+Accept: application/json
