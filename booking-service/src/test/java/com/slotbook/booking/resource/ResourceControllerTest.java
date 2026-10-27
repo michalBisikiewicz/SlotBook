@@ -40,8 +40,14 @@ public class ResourceControllerTest {
     void returnsResourceByIdAsJson() throws Exception {
         UUID resourceId = UUID.randomUUID();
 
-        Resource mockResource = new Resource("Court 5", ResourceType.COURT,
-                LocalTime.of(9, 0), LocalTime.of(18, 0), true);
+        ResourceResponse mockResource = new ResourceResponse(
+                resourceId,
+                "Court 5",
+                ResourceType.COURT,
+                LocalTime.of(9, 0),
+                LocalTime.of(18, 0),
+                true);
+
         when(resourceService.getById(resourceId)).thenReturn(mockResource);
         mockMvc.perform(get("/api/resources/{id}", resourceId)
                         .accept(MediaType.APPLICATION_JSON))

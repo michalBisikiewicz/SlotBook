@@ -11,7 +11,7 @@ POST http://localhost:8080/api/resources/{id}
 Content-Type: application/json
 
 {
-  "name": "Sala B",
+  "name": "Room B",
   "type": "ROOM",
   "openingTime": "09:00:00",
   "closingTime": "18:00:00",

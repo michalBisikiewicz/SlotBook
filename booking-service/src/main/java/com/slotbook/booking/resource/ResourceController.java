@@ -2,6 +2,9 @@ package com.slotbook.booking.resource;
 
 
 
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,38 +21,32 @@ public class ResourceController {
     }
 
     @GetMapping
-    public List<Resource> getResources() {
+    public List<ResourceResponse> getResources() {
         return resourceService.getAll();
     }
 
     @GetMapping("/{id}")
-    public Resource getById(@PathVariable UUID id) {
+    public ResourceResponse getById(@PathVariable UUID id) {
         return resourceService.getById(id);
     }
 
     @PostMapping
-    public Resource create(@RequestBody Resource resource) {
-        return resourceService.create(
-                resource.getName(),
-                resource.getType(),
-                resource.getOpeningTime(),
-                resource.getClosingTime(),
-                resource.isActive());
+    public ResponseEntity<ResourceResponse> create(@RequestBody @Valid ResourceRequest request) {
+        ResourceResponse savedResponse = resourceService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedResponse);
     }
 
     @PutMapping("/{id}")
-    public Resource update(@PathVariable UUID id, @RequestBody Resource resource) {
+    public ResourceResponse update(@PathVariable UUID id, @RequestBody @Valid ResourceRequest request) {
         return resourceService.update(
-                id,
-                resource.getName(),
-                resource.getType(),
-                resource.getOpeningTime(),
-                resource.getClosingTime(),
-                resource.isActive());
+                request,
+                id
+                );
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         resourceService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
