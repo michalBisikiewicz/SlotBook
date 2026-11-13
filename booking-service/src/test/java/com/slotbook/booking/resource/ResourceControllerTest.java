@@ -263,6 +263,44 @@ public class ResourceControllerTest {
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentTypeCompatibleWith("application/problem+json"));
     }
+
+    @Test
+    void createReturnsBadRequestWhenClosingTimeIsBeforeOpeningTime() throws Exception {
+        String body = """
+            {
+              "name": "Court 1",
+              "type": "COURT",
+              "openingTime": "12:00:00",
+              "closingTime": "11:00:00"
+            }
+            """;
+
+        mockMvc.perform(post("/api/resources")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.detail").value(containsString("openingTime must be before closingTime")));
+    }
+
+    @Test
+    void updateReturnsBadRequestWhenClosingTimeIsBeforeOpeningTime() throws Exception {
+        String body = """
+            {
+              "name": "Court 1",
+              "type": "COURT",
+              "openingTime": "22:00:00",
+              "closingTime": "11:00:00"
+            }
+            """;
+
+        mockMvc.perform(put("/api/resources/{id}", UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.detail").value(containsString("openingTime must be before closingTime")));
+    }
     @Test
     void returnsNotFoundForUnknownPath() throws Exception {
         mockMvc.perform(get("/api/unknownPath"))
