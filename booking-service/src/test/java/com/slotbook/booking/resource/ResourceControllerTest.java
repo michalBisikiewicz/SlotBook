@@ -263,5 +263,11 @@ public class ResourceControllerTest {
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentTypeCompatibleWith("application/problem+json"));
     }
-
+    @Test
+    void returnsNotFoundForUnknownPath() throws Exception {
+        mockMvc.perform(get("/api/unknownPath"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.detail").value("Endpoint not found"));
+    }
 }
