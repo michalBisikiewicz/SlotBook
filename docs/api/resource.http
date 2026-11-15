@@ -7,7 +7,7 @@ GET http://localhost:8080/api/resources/{id}
 Accept: application/json
 
 ### Create a new record
-POST http://localhost:8080/api/resources/{id}
+POST http://localhost:8080/api/resources
 Content-Type: application/json
 
 {
@@ -19,9 +19,73 @@ Content-Type: application/json
 }
 
 ### Update record
-PUT http://localhost:8080/api/resources/{id}
+PUT http://localhost:8080/api/resources/63a8d296-2fd6-4f55-a52d-76c3136d27e8
+Content-Type: application/json
+
+{
+  "name": "Room C",
+  "type": "ROOM",
+  "openingTime": "09:00:00",
+  "closingTime": "18:00:00",
+  "active": true
+}
+### Delete record by id
+DELETE http://localhost:8080/api/resources/{id}}
 Accept: application/json
 
-### Delete record by id
-DELETE http://localhost:8080/api/resources/{id}
+### Get a resource that does not exist -> 404
+GET http://localhost:8080/api/resources/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+### Get a resource with an id that is not a UUID -> 400
+GET http://localhost:8080/api/resources/not-a-uuid
+Accept: application/json
+
+### Create a resource with a blank title -> 400
+POST http://localhost:8080/api/resources
+Content-Type: application/json
+
+{
+  "name": "",
+  "type": "ROOM",
+  "openingTime": "09:00:00",
+  "closingTime": "18:00:00",
+  "active": true
+}
+
+### Create a resource with an unknown type -> 400
+POST http://localhost:8080/api/resources
+Content-Type: application/json
+
+{
+  "name": "Room B",
+  "openingTime": "09:00:00",
+  "closingTime": "18:00:00"
+}
+
+### Create a resource with malformed JSON -> 400
+POST http://localhost:8080/api/resources
+Content-Type: application/json
+
+{
+  "name": "Room B",
+  "type": "ROOM",
+  "openingTime": "09:00:00",
+  "closingTime": "18:00:00"
+
+
+### POST on a path with an id (method not allowed) -> 405
+POST http://localhost:8080/api/resources/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+  "name": "Room C",
+  "type": "ROOM",
+  "openingTime": "09:00:00",
+  "closingTime": "18:00:00",
+  "active": true
+}
+
+### Request an unknown path -> 404
+GET http://localhost:8080/api/unknownPath
 Accept: application/json
