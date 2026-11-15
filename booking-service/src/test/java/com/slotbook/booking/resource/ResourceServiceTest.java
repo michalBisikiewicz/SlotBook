@@ -3,6 +3,8 @@ package com.slotbook.booking.resource;
 import com.slotbook.booking.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -11,8 +13,7 @@ import java.time.LocalTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,6 +63,24 @@ public class ResourceServiceTest {
         assertEquals(ResourceType.COURT, response.type());
         assertEquals(LocalTime.parse("12:30"), response.openingTime());
         assertEquals(LocalTime.parse("14:30"), response.closingTime());
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void updateKeepsActiveFlag(boolean active) {
+        UUID id = UUID.randomUUID();
+        Resource existing = new Resource("Bench 2", ResourceType.EQUIPMENT, LocalTime.parse("09:00"),
+                LocalTime.parse("10:00"), active);
+        when(resourceRepository.findById(id)).thenReturn(Optional.of(existing));
+        when(resourceRepository.save(any(Resource.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        ResourceRequest request = new ResourceRequest("Bench 3", ResourceType.EQUIPMENT, LocalTime.parse("09:00"),
+                LocalTime.parse("10:00"));
+
+        ResourceResponse response = resourceService.update(request, id);
+
+        assertEquals(active, response.active());
+        verify(resourceRepository).save(existing);
     }
 
     @Test
