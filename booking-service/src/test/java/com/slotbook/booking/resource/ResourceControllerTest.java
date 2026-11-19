@@ -270,4 +270,151 @@ public class ResourceControllerTest {
                 .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
                 .andExpect(jsonPath("$.detail").value("Endpoint not found"));
     }
+    @Test
+    void createReturnsBadRequestWhenClosingTimeIsBeforeOpeningTime() throws Exception {
+        String body = """
+                {
+                  "name": "Court 1",
+                  "type": "COURT",
+                  "openingTime": "12:00:00",
+                  "closingTime": "11:00:00"
+                }
+                """;
+
+        mockMvc.perform(post("/api/resources")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.detail").value(containsString("openingTime must be before closingTime")));
+    }
+
+    @Test
+    void updateReturnsBadRequestWhenClosingTimeIsBeforeOpeningTime() throws Exception {
+        String body = """
+                {
+                  "name": "Court 1",
+                  "type": "COURT",
+                  "openingTime": "22:00:00",
+                  "closingTime": "11:00:00"
+                }
+                """;
+
+        mockMvc.perform(put("/api/resources/{id}", UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.detail").value(containsString("openingTime must be before closingTime")));
+    }
+
+    @Test
+    void createReturnsCreatedWhenOpeningHoursAreValid() throws Exception {
+        UUID resourceId = UUID.randomUUID();
+        String body = """
+                {
+                  "name": "Court 1",
+                  "type": "COURT",
+                  "openingTime": "08:00:00",
+                  "closingTime": "11:00:00"
+                }
+                """;
+        when(resourceService.create(new ResourceRequest(
+                "Court 1",
+                ResourceType.COURT,
+                LocalTime.of(8, 0),
+                LocalTime.of(11, 0)
+        )))
+                .thenReturn(new ResourceResponse(
+                        resourceId, "Court 1",
+                        ResourceType.COURT,
+                        LocalTime.of(8, 0),
+                        LocalTime.of(11, 0),
+                        false));
+        mockMvc.perform(post("/api/resources")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Court 1"))
+                .andExpect(jsonPath("$.id").value(resourceId.toString()));
+    }
+
+    @Test
+    void updateReturnsOkWhenOpeningHoursAreValid() throws Exception {
+        UUID resourceId = UUID.randomUUID();
+        String body = """
+                {
+                  "name": "Room X",
+                  "type": "ROOM",
+                  "openingTime": "10:00:00",
+                  "closingTime": "13:00:00"
+                }
+                """;
+        when(resourceService.update(any(ResourceRequest.class), eq(resourceId)))
+                .thenReturn(new ResourceResponse(
+                        resourceId, "Room X",
+                        ResourceType.ROOM,
+                        LocalTime.of(10, 0),
+                        LocalTime.of(13, 0),
+                        false));
+        ;
+        mockMvc.perform(put("/api/resources/{id}", resourceId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Room X"));
+    }
+
+    @Test
+    void createReturnsBadRequestWhenOpeningTimeIsMissing() throws Exception {
+        String body = """
+                {
+                  "name": "Room X",
+                  "type": "ROOM",
+                  "closingTime": "13:00:00"
+                }
+                """;
+        mockMvc.perform(post("/api/resources")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.detail").value("openingTime: must not be null"));
+    }
+
+    @Test
+    void createReturnsBadRequestWhenClosingTimeIsMissing() throws Exception {
+        String body = """
+                {
+                  "name": "Room X",
+                  "type": "ROOM",
+                  "openingTime": "13:00:00"
+                }
+                """;
+        mockMvc.perform(post("/api/resources")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.detail").value(containsString("closingTime")))
+                .andExpect(jsonPath("$.detail").value(not(containsString("must be before"))));
+    }
+
+    @Test
+    void createReturnsBadRequestWhenOpeningTimeIsEqualClosingTime() throws Exception {
+        String body = """
+                {
+                  "name": "Room X",
+                  "type": "ROOM",
+                  "openingTime": "13:00:00",
+                  "closingTime": "13:00:00"
+                }
+                """;
+        mockMvc.perform(post("/api/resources")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.detail").value(containsString("openingTime must be before closingTime")));
+    }
 }
